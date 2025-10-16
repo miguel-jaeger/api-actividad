@@ -1,9 +1,9 @@
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 COPY . .
 RUN mvn -B -DskipTests=false clean package
 
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 # garantizar que exista la carpeta dentro de la imagen
 RUN mkdir -p /app/data
