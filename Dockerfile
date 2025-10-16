@@ -1,13 +1,13 @@
-# Etapa 1: Build
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
+COPY . .
+RUN mvn -B -DskipTests=false clean package
 
-# Etapa 2: Run
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:17-jre
 WORKDIR /app
+# garantizar que exista la carpeta dentro de la imagen
+RUN mkdir -p /app/data
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-CMD java -Dserver.port=${PORT:-8080} -jar app.jar
+# usar la variable $PORT que Render proporciona en tiempo de ejecución
+CMD ["sh", "-c", "mkdir -p /app/data && java -Dserver.port=${PORT:-8080} -jar /app/app.jar"]
